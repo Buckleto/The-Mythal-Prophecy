@@ -85,3 +85,6 @@ ServiceFabricBackup/
 
 # Any plans
 *.md
+
+#.claude
+.claude

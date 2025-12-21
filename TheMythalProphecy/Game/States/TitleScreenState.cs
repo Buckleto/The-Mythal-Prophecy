@@ -66,10 +66,10 @@ public class TitleScreenState : IGameState
         var buttonSpacing = (int)(screenHeight * 0.015f); // ~11px at 720
         var totalMenuHeight = (buttonHeight * 4) + (buttonSpacing * 3);
 
-        // Position in lower left corner with margin
+        // Position in middle left (vertically centered)
         var margin = (int)(screenHeight * 0.05f);
         var menuX = margin;
-        var menuY = screenHeight - totalMenuHeight - margin;
+        var menuY = (screenHeight - totalMenuHeight) / 2f;
 
         // Create menu panel with vertical layout
         _menuPanel = new UIPanel(
@@ -222,10 +222,10 @@ public class TitleScreenState : IGameState
         var logoWidth = _logoTexture.Width * logoScale;
         var logoHeight = _logoTexture.Height * logoScale;
 
-        // Center logo horizontally, position at 25% from top of screen
+        // Center logo both horizontally and vertically
         var logoPosition = new Vector2(
             (screenWidth - logoWidth) / 2f,
-            screenHeight * 0.25f
+            (screenHeight - logoHeight) / 2f
         );
 
         spriteBatch.Begin(blendState: BlendState.AlphaBlend);

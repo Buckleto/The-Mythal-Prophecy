@@ -37,3 +37,8 @@
 /processor:EffectProcessor
 /build:Effects/Nebula.fx
 
+#begin Effects/LogoShimmer.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/LogoShimmer.fx
+

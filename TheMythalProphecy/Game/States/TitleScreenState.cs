@@ -20,6 +20,7 @@ public class TitleScreenState : IGameState
     private Texture2D _pixelTexture;
     private Effect _nebulaEffect;
     private Effect _starfallEffect;
+    private Effect _logoShimmerEffect;
     private SpriteFont _menuFont;
     private float _elapsedTime;
     private UIPanel _menuPanel;
@@ -48,6 +49,7 @@ public class TitleScreenState : IGameState
         // Load shader effects
         _nebulaEffect = _content.Load<Effect>("Effects/Nebula");
         _starfallEffect = _content.Load<Effect>("Effects/Starfall");
+        _logoShimmerEffect = _content.Load<Effect>("Effects/LogoShimmer");
 
         // Load fancy menu font
         _menuFont = _content.Load<SpriteFont>("Fonts/MenuTitle");
@@ -215,31 +217,48 @@ public class TitleScreenState : IGameState
         spriteBatch.Draw(_pixelTexture, screenRect, Color.White);
         spriteBatch.End();
 
-        // === Layer 3: Logo ===
-        // Scale logo to fit 50% of screen width
-        var targetWidth = screenWidth * 0.5f;
+        // === Layer 3: Logo with effects ===
+        // Scale logo to fit 65% of screen width (1.3x original)
+        var targetWidth = screenWidth * 0.65f;
         var logoScale = targetWidth / _logoTexture.Width;
         var logoWidth = _logoTexture.Width * logoScale;
         var logoHeight = _logoTexture.Height * logoScale;
 
-        // Center logo both horizontally and vertically
+        // Position logo to the right to avoid UI buttons on left
         var logoPosition = new Vector2(
-            (screenWidth - logoWidth) / 2f,
+            screenWidth * 0.55f - logoWidth / 2f,
             (screenHeight - logoHeight) / 2f
         );
 
+        // Layer 3a: Drop shadow (separate, not affected by shimmer)
         spriteBatch.Begin(blendState: BlendState.AlphaBlend);
-        spriteBatch.Draw(
-            _logoTexture,
-            logoPosition,
-            null,
-            Color.White,
-            0f,
-            Vector2.Zero,
-            logoScale,
-            SpriteEffects.None,
-            0f
-        );
+        var shadowOffset = new Vector2(5, 5) * logoScale;
+        var shadowColor = new Color(0, 0, 0, 128);
+        spriteBatch.Draw(_logoTexture, logoPosition + shadowOffset, null, shadowColor, 0f, Vector2.Zero, logoScale, SpriteEffects.None, 0f);
+
+        // Layer 3b: Dark outline (4 draws at cardinal directions)
+        var outlineColor = new Color(20, 10, 30);
+        float outlineOffset = 2f * logoScale;
+        spriteBatch.Draw(_logoTexture, logoPosition + new Vector2(-outlineOffset, 0), null, outlineColor, 0f, Vector2.Zero, logoScale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(_logoTexture, logoPosition + new Vector2(outlineOffset, 0), null, outlineColor, 0f, Vector2.Zero, logoScale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(_logoTexture, logoPosition + new Vector2(0, -outlineOffset), null, outlineColor, 0f, Vector2.Zero, logoScale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(_logoTexture, logoPosition + new Vector2(0, outlineOffset), null, outlineColor, 0f, Vector2.Zero, logoScale, SpriteEffects.None, 0f);
+        spriteBatch.End();
+
+        // Layer 3c: Main logo with vertical shimmer effect
+        // First shimmer after 15 seconds, then every 60 seconds, takes 5 seconds to sweep
+        float initialDelay = 15f;
+        float shimmerInterval = 60f;
+        float shimmerDuration = 5f;
+        float adjustedTime = MathF.Max(0f, _elapsedTime - initialDelay);
+        float cycleTime = adjustedTime % shimmerInterval;
+        float shimmerPhase = cycleTime < shimmerDuration ? cycleTime / shimmerDuration : -1f;
+
+        _logoShimmerEffect.Parameters["Time"]?.SetValue(_elapsedTime);
+        _logoShimmerEffect.Parameters["ShimmerPhase"]?.SetValue(shimmerPhase);
+
+        spriteBatch.Begin(blendState: BlendState.AlphaBlend, effect: _logoShimmerEffect);
+        spriteBatch.Draw(_logoTexture, logoPosition, null, Color.White, 0f, Vector2.Zero, logoScale, SpriteEffects.None, 0f);
         spriteBatch.End();
 
         // Resume normal batch for UI

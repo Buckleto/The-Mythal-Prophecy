@@ -2,6 +2,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using TheMythalProphecy.Game.States;
+using TheMythalProphecy.Game.Entities;
+using TheMythalProphecy.Game.Entities.Components;
+using TheMythalProphecy.Game.Data.Mock;
 
 namespace TheMythalProphecy.Game.Core;
 
@@ -35,8 +38,11 @@ public class MythalGame : Microsoft.Xna.Framework.Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // Initialize game services
+        // Initialize game services (includes font/theme initialization)
         GameServices.Initialize(Content, GraphicsDevice);
+
+        // Initialize mock data for development
+        MockDataInitializer.Initialize();
 
         // Initialize state manager
         _stateManager = new GameStateManager();
@@ -48,12 +54,13 @@ public class MythalGame : Microsoft.Xna.Framework.Game
 
     protected override void Update(GameTime gameTime)
     {
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
+        // Only handle gamepad Back button for platform-specific exit
+        // Allow states to handle Escape key for pause menus
+        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             Exit();
 
-        // Update game services (input, etc.)
-        GameServices.Update();
+        // Update game services (input, UI, etc.)
+        GameServices.Update(gameTime);
 
         // Update current state
         _stateManager?.Update(gameTime);

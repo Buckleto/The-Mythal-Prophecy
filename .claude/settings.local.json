@@ -8,7 +8,9 @@
       "WebSearch",
       "Bash(dotnet tool install:*)",
       "Bash(dotnet mgcb-editor:*)",
-      "Bash(dotnet build:*)"
+      "Bash(dotnet build:*)",
+      "Bash(tree:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

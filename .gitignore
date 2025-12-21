@@ -81,4 +81,7 @@ ServiceFabricBackup/
 *~
 
 # Claude Code plans (optional - uncomment if you don't want to track plans)
-# .claude/plans/
+.claude/plans/
+
+# Any plans
+*.md

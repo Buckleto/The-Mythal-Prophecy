@@ -55,8 +55,8 @@ public class TitleScreenState : IGameState
         // Check for Enter key to start game
         if (GameServices.Input.IsAcceptPressed())
         {
-            // TODO: Transition to next state (WorldMapState) when implemented
-            // For now, just do nothing
+            // Transition to world map (main game state)
+            _stateManager.ChangeState(new WorldMapState(_stateManager));
         }
     }
 

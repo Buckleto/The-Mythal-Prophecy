@@ -25,3 +25,8 @@
 /processor:EffectProcessor
 /build:Effects/Starfall.fx
 
+#begin Effects/Nebula.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/build:Effects/Nebula.fx
+

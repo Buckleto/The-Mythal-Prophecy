@@ -126,7 +126,6 @@ float4 MainPS(VertexShaderOutput input) : COLOR
     // Star color - cool white with slight blue tint
     float3 starColor = float3(0.95, 0.97, 1.0);
 
-    // Return just the starlight (additive blend will combine with scene)
     return float4(starColor * starlight, starlight);
 }
 

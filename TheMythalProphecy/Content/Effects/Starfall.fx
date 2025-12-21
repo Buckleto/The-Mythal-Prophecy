@@ -35,9 +35,53 @@ float Hash(float2 p)
     return frac((p3.x + p3.y) * p3.z);
 }
 
-// Star rendering with variable size
-float Star(float2 uv, float2 center, float size, float seed)
+// Disc-shaped star (elliptical appearance)
+float DiscStar(float2 uv, float2 center, float size, float seed)
 {
+    float2 diff = uv - center;
+
+    // Correct for aspect ratio
+    diff.x *= Resolution.x / Resolution.y;
+
+    // Rotate based on seed for variety
+    float angle = seed * 6.28;
+    float cosA = cos(angle);
+    float sinA = sin(angle);
+    float2 rotated = float2(
+        diff.x * cosA - diff.y * sinA,
+        diff.x * sinA + diff.y * cosA
+    );
+
+    // Stretch one axis to create disc/ellipse appearance
+    float stretch = 2.0 + seed * 1.5; // Stretch factor varies by star
+    rotated.x *= stretch;
+
+    float dist = length(rotated);
+
+    // Twinkle with time-based modulation
+    float twinkle = sin(Time * 2.0 + seed * 6.28) * 0.25 + 0.75;
+
+    // Disc brightness - sharper falloff than regular stars
+    float radius = size * 0.015;
+    float brightness = smoothstep(radius, radius * 0.1, dist) * twinkle;
+
+    // Subtle outer glow
+    float glowRadius = radius * 2.0;
+    float glow = smoothstep(glowRadius, radius, dist) * 0.2;
+    brightness += glow * twinkle;
+
+    return brightness;
+}
+
+// Star rendering with variable size
+float Star(float2 uv, float2 center, float size, float seed, float isDisc)
+{
+    // Use disc rendering for ~25% of stars
+    if (isDisc < 0.25)
+    {
+        return DiscStar(uv, center, size, seed);
+    }
+
     float2 diff = uv - center;
 
     // Correct for aspect ratio
@@ -86,6 +130,7 @@ float4 MainPS(VertexShaderOutput input) : COLOR
                 float seed = Hash(float2(i + layerSeed, j + layerSeed));
                 float seed2 = Hash(float2(j + layerSeed + 0.5, i + layerSeed));
                 float seed3 = Hash(float2(i * 0.7 + layerSeed, j * 0.3 + seed));
+                float discChance = Hash(float2(seed + 0.123, seed2 * 0.456)); // Determines if disc-shaped
 
                 // Base position: distribute across entire screen with randomness
                 float baseX = (i + seed * 0.9) / 10.0;
@@ -109,8 +154,8 @@ float4 MainPS(VertexShaderOutput input) : COLOR
                 float fadeOut = 1.0 - smoothstep(0.8, 1.0, z);
                 float fade = fadeIn * fadeOut;
 
-                // Render star
-                float star = Star(uv, starPos, size, seed);
+                // Render star (some will be disc-shaped based on discChance)
+                float star = Star(uv, starPos, size, seed, discChance);
 
                 // Brightness increases as star gets closer
                 float brightness = 0.4 + z * 0.6;

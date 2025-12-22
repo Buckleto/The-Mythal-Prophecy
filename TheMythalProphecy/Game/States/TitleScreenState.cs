@@ -128,7 +128,7 @@ public class TitleScreenState : IGameState
 
     private void OnOptionsClicked(UIButton button)
     {
-        _stateManager.PushState(new OptionsMenuState(_stateManager));
+        _stateManager.PushState(new GleamOptionsMenuState(_content, _stateManager));
     }
 
     private void OnExitClicked(UIButton button)

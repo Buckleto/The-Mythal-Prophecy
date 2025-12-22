@@ -4,10 +4,42 @@ using Microsoft.Xna.Framework.Graphics;
 namespace TheMythalProphecy.Game.UI.Gleam;
 
 /// <summary>
+/// Interface for GleamUI themes. Allows GleamRenderer to work with different theme types.
+/// </summary>
+public interface IGleamTheme
+{
+    // Core colors
+    Color DeepPurple { get; }
+    Color MidPurple { get; }
+    Color DarkPurple { get; }
+    Color MutedPurple { get; }
+    Color Gold { get; }
+    Color GoldBright { get; }
+    Color GoldDim { get; }
+    Color TextPrimary { get; }
+    Color TextSecondary { get; }
+    Color TextDisabled { get; }
+
+    // Animation timing
+    float HoverTransitionDuration { get; }
+
+    // Sizing
+    int BorderThickness { get; }
+    int PaddingSmall { get; }
+    int PaddingMedium { get; }
+    int PaddingLarge { get; }
+
+    // Fonts
+    SpriteFont DefaultFont { get; }
+    SpriteFont MenuFont { get; }
+    bool IsInitialized { get; }
+}
+
+/// <summary>
 /// Cosmic/mystical theme for GleamUI components.
 /// Color palette derived from title screen aesthetic.
 /// </summary>
-public class GleamTheme
+public class GleamTheme : IGleamTheme
 {
     // Core cosmic palette
     public Color DeepPurple { get; } = new Color(15, 4, 31);

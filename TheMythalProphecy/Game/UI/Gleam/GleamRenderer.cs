@@ -14,14 +14,14 @@ public class GleamRenderer
     private Texture2D _pixelTexture;
     private Effect _shimmerEffect;
     private Effect _nebulaEffect;
-    private GleamTheme _theme;
+    private IGleamTheme _theme;
     private GraphicsDevice _graphicsDevice;
 
-    public GleamTheme Theme => _theme;
+    public IGleamTheme Theme => _theme;
     public Texture2D PixelTexture => _pixelTexture;
     public bool ShadersLoaded => _shimmerEffect != null;
 
-    public void Initialize(GraphicsDevice graphicsDevice, ContentManager content, GleamTheme theme)
+    public void Initialize(GraphicsDevice graphicsDevice, ContentManager content, IGleamTheme theme)
     {
         _graphicsDevice = graphicsDevice;
         _theme = theme;
